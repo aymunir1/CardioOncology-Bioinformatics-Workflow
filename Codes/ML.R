@@ -66,8 +66,8 @@ lasso_genes
 ##############################################
 
 rf_model <- randomForest(
-  Class ~ .,
-  data = train_data,
+  x = train_data[, colnames(train_data) != "Class"],
+  y = train_data$Class,
   importance = TRUE,
   ntree = 1000
 )
@@ -151,6 +151,7 @@ ggplot(rf_imp_df_top, aes(x = reorder(Gene, Importance), y = Importance)) +
 write.csv(lasso_genes, "LASSO_selected_genes.csv", row.names = FALSE)
 write.csv(rf_genes, "RF_selected_genes.csv", row.names = FALSE)
 write.csv(consensus_genes, "Consensus_ML_biomarkers.csv", row.names = FALSE)
+
 
 
 
