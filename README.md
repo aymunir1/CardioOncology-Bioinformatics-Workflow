@@ -1,10 +1,3 @@
-# CardioOncology-Bioinformatics-Workflow
-R-based pipeline for differential expression analysis of BC transcriptomics, cross-referenced with CVD-related genes and pathways
-
-
-
-
-
 # Identifying Shared Molecular Biomarkers Linking Cardiovascular Diseases and Breast Cancer
 
 ## Overview
@@ -14,8 +7,19 @@ This project implements an **R-based bioinformatics and machine learning workflo
 
 ---
 
+
+## Contributors
+- Yusuf Munir Aliyu (`aymunir1`) Abeer Ali (`abeer_ali_`)
+- Rashi Gupta (`rashig_23`)
+- Rawan Ateff (`rawanateff1080`)
+- Rihab (`biotechexplorer_79059`)
+- Imoleayo (`imoleayo0964`)
+---
+
 ## Objectives
-- Identify differentially expressed genes (DEGs) in breast cancer transcriptomic data  
+--
+
+- Identify differentially expressed genes (DEGs) in breast cancer t
 - Functionally characterize dysregulated genes using GO, KEGG, MSigDB, and GSEA  
 - Cross-reference BC-derived DEGs with cardiovascular disease–associated genes and pathways  
 - Apply machine learning feature selection to reinforce biologically relevant shared biomarkers  
@@ -103,13 +107,3 @@ The analysis generates the following files:
 ## Keywords
 Breast cancer, cardiovascular diseases, shared biomarkers, differentially expressed genes, bioinformatics, machine learning, cardio-oncology
 
----
-
-## Contributors
-- Abeer Ali (`abeer_ali_`)
-- Rashi Gupta (`rashig_23`)
-- Rawan Ateff (`rawanateff1080`)
-- Rihab (`biotechexplorer_79059`)
-- Yusuf Munir Aliyu (`aymunir1`)
-- Imoleayo (`imoleayo0964`)
-- 
