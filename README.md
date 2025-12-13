@@ -17,7 +17,6 @@ This project implements an **R-based bioinformatics and machine learning workflo
 ---
 
 ## Objectives
---
 
 - Identify differentially expressed genes (DEGs) in breast cancer t
 - Functionally characterize dysregulated genes using GO, KEGG, MSigDB, and GSEA  
@@ -45,32 +44,81 @@ This project implements an **R-based bioinformatics and machine learning workflo
 7. Consensus biomarker identification  
 8. Model evaluation and result export  
 
+---  ---
+
+## Methods and R Packages
+
+### 1. Data Acquisition and Preprocessing
+- **Packages:** `GEOquery`, `oligo`, `Biobase`  
+- Raw microarray data were retrieved from GEO using `GEOquery`.  
+- Background correction and **RMA normalization** were performed using `oligo`.  
+- Expression data were stored and managed as `ExpressionSet` objects (`Biobase`).
+
 ---
 
-## Methods
+### 2. Probe Annotation and Gene Mapping
+- **Packages:** `AnnotationDbi`, `org.Hs.eg.db`  
+- Probe IDs were mapped to official gene symbols and Entrez IDs.  
+- Redundant probes were collapsed by retaining the gene with the highest absolute log fold change.
 
-### Differential Expression Analysis
-- Gene symbols were filtered and redundant probes collapsed by selecting genes with the maximum absolute log fold change.
-- Gene identifiers were mapped from SYMBOL to ENTREZ ID for downstream enrichment analyses.
+---
 
-### Functional Enrichment
-- **GO Biological Process (GSEA):** Performed using ranked gene lists.
-- **KEGG Pathway Analysis:** Over-representation analysis of DEG-associated pathways.
-- Results were visualized using dot plots.
+### 3. Exploratory Data Analysis
+- **Packages:** `stats`, `ggplot2`, `pheatmap`  
+- Principal Component Analysis (PCA) was used to assess sample variability.  
+- Hierarchical clustering and heatmaps were generated to visualize expression patterns.
 
-### Machine Learning Feature Selection
-Two complementary approaches were applied:
+---
 
-**LASSO (GLMNET)**
-- Logistic regression with L1 regularization
-- 10-fold cross-validation
-- Selection of genes with non-zero coefficients
+### 4. Differential Expression Analysis
+- **Package:** `limma`  
+- Linear models were fitted to identify DEGs between breast cancer and normal samples.  
+- Genes meeting statistical significance thresholds were retained for downstream analyses.
 
-**Random Forest**
-- Ensemble learning with 1,000 trees
-- Variable importance ranking
+---
 
-**Consensus biomarkers** were defined as the intersection of genes selected by both methods.
+### 5. Functional Enrichment Analysis
+- **Packages:** `clusterProfiler`, `enrichplot`, `msigdbr`, `org.Hs.eg.db`  
+
+**GO Biological Process (GSEA):**  
+- Ranked gene lists (by log fold change) were analyzed using `gseGO` from `clusterProfiler`.
+
+**KEGG Pathway Analysis:**  
+- Over-representation analysis was performed using `enrichKEGG`.  
+
+**Visualization:**  
+- Enrichment results were visualized using dot plots (`enrichplot`, `ggplot2`).
+
+---
+
+### 6. Machine Learning Feature Selection
+- **Packages:** `caret`, `glmnet`, `randomForest`, `tidyverse`  
+
+**LASSO (GLMNET):**  
+- Logistic regression with L1 regularization was implemented using `glmnet`.  
+- Optimal lambda was determined via 10-fold cross-validation.
+
+**Random Forest:**  
+- A Random Forest classifier was trained using `randomForest` with 1,000 trees.  
+- Variable importance scores were used to rank genes.
+
+**Consensus Biomarkers:**  
+- Genes selected by both LASSO and Random Forest were retained as consensus candidates.
+
+---
+
+### 7. Model Evaluation
+- **Packages:** `caret`  
+- Model performance was assessed on held-out test data using confusion matrices.
+
+---
+
+### 8. Result Export and Reproducibility
+- **Base R functions** were used to export DEG tables, enrichment results, and machine learning outputs.  
+- Complete R session details were saved using `sessionInfo()` to ensure reproducibility.
+
+---
+
 
 ---
 
