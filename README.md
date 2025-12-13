@@ -3,7 +3,7 @@
 ## Overview
 Breast cancer (BC) and cardiovascular diseases (CVDs) are leading causes of global morbidity and mortality. Growing evidence suggests that these conditions share converging biological mechanisms, including chronic inflammation, oxidative stress, metabolic dysregulation, hormonal signaling, and epigenetic regulation. Clinical observations further indicate a bidirectional interaction, where cancer therapies may induce cardiotoxicity and pre-existing cardiovascular dysfunction may influence tumor progression and recurrence.
 
-This project implements an **R-based bioinformatics and machine learning workflow** to identify **shared molecular biomarkers and pathways** linking breast cancer and cardiovascular diseases using transcriptomic data and curated cardiovascular-related evidence.
+The project implements an **R-based bioinformatics and machine learning workflow** to identify **shared molecular biomarkers and pathways** linking breast cancer and cardiovascular diseases using transcriptomic data and curated cardiovascular-related evidence.
 
 ---
 
