@@ -1,6 +1,6 @@
-##############################################
+
 # 1. Load packages
-##############################################
+
 library(GEOquery)
 library(arrayQualityMetrics)
 library(pheatmap)
@@ -21,9 +21,7 @@ library(ggrepel)
 library(ReactomePA)
 library(enrichplot)
 
-##############################################
 # 2. Download CEL files + metadata
-##############################################
 # Download series matrix file
 gse <- getGEO("GSE109169", GSEMatrix = TRUE)
 pheno <- pData(gse[[1]]) %>% as.data.frame()
@@ -32,9 +30,7 @@ pheno <- pData(gse[[1]]) %>% as.data.frame()
 getGEOSuppFiles("GSE109169")
 untar("GSE109169/GSE109169_RAW.tar")
 
-##############################################
 # 3. Read CEL files & create ExpressionSet
-##############################################
 setwd("~/GSE109169_RAW")
 gz_files <- list.files(pattern = "CEL.gz$", full.names = TRUE)
 for (f in gz_files) {
@@ -59,9 +55,7 @@ for (f in gz_files) {
 cel_files <- list.files(pattern = "\\.CEL$", ignore.case = TRUE)
 raw_data <- read.celfiles(cel_files)
 
-##############################################
 # 4. Raw Quality Control
-##############################################
 arrayQualityMetrics(raw_data, outdir = "QC_raw", force = TRUE)
 
 boxplot(raw_data, target = "probeset", main = "Raw Intensities")
@@ -69,26 +63,20 @@ boxplot(raw_data, target = "probeset", main = "Raw Intensities")
 pm_means <- pm(raw_data)  # PM probe intensities
 head(pm_means)
 
-##############################################
-# 5. RMA Normalization
-##############################################
 
+# 5. RMA Normalization
 norm_data <- rma(raw_data)
 expr_matrix <- exprs(norm_data)
 
-##############################################
 # 6. Batch detection (optional)
-##############################################
 pheno$source_name_ch1 <- make.names(pheno$source_name_ch1)
 mod <- model.matrix(~ pheno$source_name_ch1)
 sv <- svaseq(as.matrix(expr_matrix), mod, mod0 = NULL)
 design <- cbind(mod, sv$sv)
 fit <- lmFit(expr_matrix, design)
 
-##############################################
-# 7. limma design + DEG
-##############################################
 
+# 7. limma design + DEG
 pheno$source_name_ch1 <- make.names(pheno$source_name_ch1)
 group <- factor(pheno$source_name_ch1)
 pData(raw_data)$group <- group
@@ -107,10 +95,8 @@ fit2 <- eBayes(fit2)
 
 deg_results <- topTable(fit2, number = Inf, adjust.method = "BH")
 
-##############################################
-# 8.  Annotation: probe → gene
-##############################################
 
+# 8.  Annotation: probe → gene
 probe_ids <- rownames(deg_results)
 annotation <- AnnotationDbi::select(
   huex10sttranscriptcluster.db,
@@ -126,9 +112,7 @@ deg_results <- merge(
   all.x = TRUE
 )
 
-####################################################################
 # 9. Analysis by generating Up/Down-regulated genes and PCA analysis
-####################################################################
 deg_results <- deg_results[!duplicated(deg_results$Row.names), ]
 deg_results <- deg_results[complete.cases(deg_results), ]
 
@@ -163,10 +147,7 @@ ggplot(pca_df, aes(x = PC1, y = PC2, color = Group, label = Sample)) +
     y = paste0("PC2 (", round(summary(pca)$importance[2,2]*100, 1), "%)")
   )
 
-##############################################
 # 10. Visualization
-##############################################
-
 #Volcano Plot
 deg_results$threshold <- "Not Sig"
 deg_results$threshold[deg_results$logFC > 1 & deg_results$P.Value < 0.05] <- "Up"
@@ -198,10 +179,8 @@ pheatmap(
   color = colorRampPalette(c("blue", "white", "red"))(100)
 )
 
-##############################################
-# 11. Functional enrichment
-##############################################
 
+# 11. Functional enrichment
 #Preparing gene list
 deg2 <- deg_results %>% filter(!is.na(SYMBOL))
 deg_unique <- deg2 %>%
@@ -243,26 +222,23 @@ dotplot(kegg_ora, showCategory = 50) +
         axis.text.x = element_text(size = 4), 
         axis.title = element_text(size = 5))
 
-################################################
+
 # 12. Save DEG table and up/down-regulated genes
-################################################
 write.csv(deg_results, "DEG_GSE109169.csv")
 write.csv(deg_up, "UP_DEG_GSE109169.csv")
 write.csv(deg_down, "DOWN_DEG_GSE109169.csv")
 
-##############################################
+
 # 13. Save normalized expression matrix
-##############################################
 write.csv(expr_matrix, "GSE109169_normalized_expression_matrix.csv")
 
-##############################################
+
 # 14. Save GO enrichment results
-##############################################
 write.csv(as.data.frame(gsea_go), "GO_enrichment_results.csv")
 write.csv(as.data.frame(kegg_ora), "KEGG_enrichment_results.csv")
 
-##############################################
+
 # 15. Save R session info (reproducibility)
-##############################################
 writeLines(capture.output(sessionInfo()), "sessionInfo.txt")
+
 
