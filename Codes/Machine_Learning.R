@@ -1,15 +1,12 @@
-##############################################
+
 # 16. MACHINE LEARNING FEATURE SELECTION
-##############################################
 
 library(caret)
 library(glmnet)
 library(randomForest)
 library(tidyverse)
 
-#-------------------------------
 # Prepare ML dataset
-#-------------------------------
 
 # Use only DEGs for ML
 deg_mat <- expr_matrix[rownames(deg_results), ]
@@ -22,21 +19,13 @@ ml_data$Class <- group   # from your DEG script
 
 table(ml_data$Class)
 
-
-
-
 set.seed(123)
 
 train_index <- createDataPartition(ml_data$Class, p = 0.8, list = FALSE)
 train_data <- ml_data[train_index, ]
 test_data  <- ml_data[-train_index, ]
 
-
-
-
-##############################################
 # 17. LASSO (GLMNET)
-##############################################
 
 x_train <- as.matrix(train_data[, -ncol(train_data)])
 y_train <- as.factor(train_data$Class)
@@ -58,12 +47,7 @@ lasso_genes <- lasso_genes[lasso_genes != "(Intercept)"]
 lasso_genes
 
 
-
-
-
-##############################################
 # 18. RANDOM FOREST
-##############################################
 
 rf_model <- randomForest(
   x = train_data[, colnames(train_data) != "Class"],
@@ -76,24 +60,12 @@ rf_imp <- importance(rf_model)
 rf_genes <- names(sort(rf_imp[, 1], decreasing = TRUE))[1:50]   # top 50 important genes
 rf_genes
 
-
-
-
-
-
-##############################################
 # 19. CONSENSUS BIOMARKERS
-##############################################
 
 consensus_genes <- intersect(lasso_genes, rf_genes)
 consensus_genes
 
-
-
-
-##############################################
 # 20. MODEL EVALUATION
-##############################################
 
 x_test  <- as.matrix(test_data[, -ncol(test_data)])
 y_test  <- as.factor(test_data$Class)
@@ -106,13 +78,7 @@ confusionMatrix(as.factor(lasso_pred), y_test)
 rf_pred <- predict(rf_model, newdata = test_data)
 confusionMatrix(as.factor(rf_pred), y_test)
 
-
-
-
-
-##############################################
 # 21. VARIABLE IMPORTANCE PLOTS
-##############################################
 
 # LASSO Coefficients
 lasso_coef_df <- data.frame(
@@ -140,20 +106,8 @@ ggplot(rf_imp_df_top, aes(x = reorder(Gene, Importance), y = Importance)) +
   theme_minimal() +
   labs(title = "Random Forest – Top Important Genes")
 
-
-
-
-
-##############################################
 # 22. SAVE RESULTS
-##############################################
 
 write.csv(lasso_genes, "LASSO_selected_genes.csv", row.names = FALSE)
 write.csv(rf_genes, "RF_selected_genes.csv", row.names = FALSE)
 write.csv(consensus_genes, "Consensus_ML_biomarkers.csv", row.names = FALSE)
-
-
-
-
-
-
